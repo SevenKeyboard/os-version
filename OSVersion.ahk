@@ -31,6 +31,14 @@ Example Usage:
         . "`nIsWindowsServer: " OSVersion.isWindowsServer()
 */
 
+class VersionManager_OSVersion
+{
+    static _ := VersionManager_OSVersion._init()
+    _init()    {
+        global
+        OSVERSION_VERSION := "2.0.0"
+    }
+}
 class OSVersion
 {
     /*
@@ -68,10 +76,9 @@ class OSVersion
         ,VER_NT_SERVER              := 0x0000003
         ,VER_NT_WORKSTATION         := 0x0000001
 
-        ,B8504BA1_980D_4F48_B77B_9D249D6F37BD:=OSVersion._init()
+        ,_:=OSVersion._init()
 
     _init()    {
-        global OSVERSION_VERSION := "2.0.0"
         static STATUS_SUCCESS:=0x00000000
         this._lpVersionInformation:=new this.OSVERSIONINFOEXW
         if (dllCall("Ntdll.dll\RtlGetVersion", "Ptr",this._lpVersionInformation.ptr)==STATUS_SUCCESS)    {

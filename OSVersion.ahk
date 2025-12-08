@@ -79,9 +79,9 @@ class OSVersion
         ,_:=OSVersion._init()
 
     _init()    {
-        static STATUS_SUCCESS:=0x00000000
+        ;  static STATUS_SUCCESS:=0x00000000
         this._lpVersionInformation:=new this.OSVERSIONINFOEXW
-        if (dllCall("Ntdll.dll\RtlGetVersion", "Ptr",this._lpVersionInformation.ptr)==STATUS_SUCCESS)    {
+        if (dllCall("Ntdll.dll\RtlGetVersion", "Ptr",this._lpVersionInformation.ptr)==0x00000000)    { ;  Compare directly by value since _init() is called before static variables are assigned
             switch ((this.MajorVersion<<8)|this.MinorVersion)
             {
                 case this._WIN32_WINNT_WIN10:

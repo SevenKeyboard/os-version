@@ -137,7 +137,7 @@ class OSVersion
      * https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
      */
     isWindowsVersionOrGreater(majorVersion, minorVersion, servicePackMajor, buildNumber)    {
-        if (this.MajorVersion!==0)    {
+        if (this.MajorVersion !== 0)    {
             if (this.MajorVersion > majorVersion)
                 return true
             else if (this.MajorVersion < majorVersion)

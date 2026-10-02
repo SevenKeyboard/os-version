@@ -7,11 +7,11 @@
 ; License: The Unlicense
 ;
 ; Documentation / References:
-;   Update WINVER and _WIN32_WINNT:
+;   Update WINVER and _WIN32_WINNT
 ;     https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
-;   versionhelpers.h header:
+;   versionhelpers.h header
 ;     https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
-;   OSVERSIONINFOEXW structure (winnt.h):
+;   OSVERSIONINFOEXW structure (winnt.h)
 ;     https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
 ;
 ;   Basic wrapper for the Windows Version Helper functions
@@ -36,7 +36,7 @@ class VersionManager_OSVersion
     static _ := VersionManager_OSVersion._init()
     _init()    {
         global
-        OSVERSION_VERSION := "2.0.0"
+        OSVERSION_VERSION := "2.1.0"
     }
 }
 class OSVersion
@@ -71,6 +71,15 @@ class OSVersion
         ,BUILD_20H1     := 19041
         ,BUILD_21H2     := 22000
         ,BUILD_22H2     := 22621
+        ,BUILD_WIN10_20H2 := 19042
+        ,BUILD_WIN10_21H1 := 19043
+        ,BUILD_WIN10_21H2 := 19044
+        ,BUILD_WIN10_22H2 := 19045
+        ,BUILD_23H2 := 22631
+        ,BUILD_24H2 := 26100
+        ,BUILD_25H2 := 26200
+        ,BUILD_26H2 := 26300
+        ,BUILD_26H1 := 28000
 
         ,VER_NT_DOMAIN_CONTROLLER   := 0x0000002
         ,VER_NT_SERVER              := 0x0000003
@@ -105,12 +114,30 @@ class OSVersion
         switch (this.WIN)
         {
             case "WIN_11":
-                if (this.BuildNumber >= this.Build_22H2)
+                if (this.BuildNumber >= this.BUILD_26H1)
+                    this._build:="26H1"
+                else if (this.BuildNumber >= this.BUILD_26H2)
+                    this._build:="26H2"
+                else if (this.BuildNumber >= this.BUILD_25H2)
+                    this._build:="25H2"
+                else if (this.BuildNumber >= this.BUILD_24H2)
+                    this._build:="24H2"
+                else if (this.BuildNumber >= this.BUILD_23H2)
+                    this._build:="23H2"
+                else if (this.BuildNumber >= this.Build_22H2)
                     this._build:="22H2"
                 else if (this.BuildNumber >= this.Build_21H2)
                     this._build:="21H2"
             case "WIN_10":
-                if (this.BuildNumber >= this.BUILD_20H1)
+                if (this.BuildNumber >= this.BUILD_WIN10_22H2)
+                    this._build:="22H2"
+                else if (this.BuildNumber >= this.BUILD_WIN10_21H2)
+                    this._build:="21H2"
+                else if (this.BuildNumber >= this.BUILD_WIN10_21H1)
+                    this._build:="21H1"
+                else if (this.BuildNumber >= this.BUILD_WIN10_20H2)
+                    this._build:="20H2"
+                else if (this.BuildNumber >= this.BUILD_20H1)
                     this._build:="20H1"
                 else if (this.BuildNumber >= this.BUILD_19H2)
                     this._build:="19H2"
@@ -229,6 +256,33 @@ class OSVersion
     }
     isWindows1122H2OrGreater()    {
         return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_22H2)
+    }
+    isWindows1020H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_WIN10_20H2)
+    }
+    isWindows1021H1OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_WIN10_21H1)
+    }
+    isWindows1021H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_WIN10_21H2)
+    }
+    isWindows1022H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_WIN10_22H2)
+    }
+    isWindows1123H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_23H2)
+    }
+    isWindows1124H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_24H2)
+    }
+    isWindows1125H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_25H2)
+    }
+    isWindows1126H2OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_26H2)
+    }
+    isWindows1126H1OrGreater()    {
+        return this.isWindowsVersionOrGreater(this.HIBYTE(this._WIN32_WINNT_WIN10),this.LOBYTE(this._WIN32_WINNT_WIN10),0,this.BUILD_26H1)
     }
     isWindowsServer()    {
         static VER_PRODUCT_TYPE:=0x0000080, VER_EQUAL:=1

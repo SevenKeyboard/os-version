@@ -104,11 +104,53 @@ namespace SevenKeyboard
         public static bool IsWindowsXPOrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(5, 1);
 
+        public static bool IsWindowsXPSP1OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_WINXP),
+                LOBYTE(_WIN32_WINNT_WINXP),
+                1,
+                0);
+
+        public static bool IsWindowsXPSP2OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_WINXP),
+                LOBYTE(_WIN32_WINNT_WINXP),
+                2,
+                0);
+
+        public static bool IsWindowsXPSP3OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_WINXP),
+                LOBYTE(_WIN32_WINNT_WINXP),
+                3,
+                0);
+
         public static bool IsWindowsVistaOrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(6, 0);
 
+        public static bool IsWindowsVistaSP1OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_VISTA),
+                LOBYTE(_WIN32_WINNT_VISTA),
+                1,
+                0);
+
+        public static bool IsWindowsVistaSP2OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_VISTA),
+                LOBYTE(_WIN32_WINNT_VISTA),
+                2,
+                0);
+
         public static bool IsWindows7OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(6, 1);
+
+        public static bool IsWindows7SP1OrGreater()
+            => IsWindowsVersionOrGreater(
+                HIBYTE(_WIN32_WINNT_WIN7),
+                LOBYTE(_WIN32_WINNT_WIN7),
+                1,
+                0);
 
         public static bool IsWindows8OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(6, 2);
@@ -200,6 +242,12 @@ namespace SevenKeyboard
                     throw new System.InvalidOperationException("Unknown Windows product type.");
             }
         }
+
+        public static byte HIBYTE(ushort w)
+            => (byte)((w >> 8) & 0xFF);
+
+        public static byte LOBYTE(ushort w)
+            => (byte)(w & 0xFF);
 
         public static int OSVersionInfoSize
             => (int)NativeVersionInfo.Value.dwOSVersionInfoSize;

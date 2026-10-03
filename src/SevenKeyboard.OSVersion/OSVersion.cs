@@ -6,17 +6,19 @@
 // License: The Unlicense
 //
 // Documentation / References:
-//   Update WINVER and _WIN32_WINNT:
+//   Update WINVER and _WIN32_WINNT
 //     https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
-//   versionhelpers.h header:
+//   versionhelpers.h header
 //     https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
-//   OSVERSIONINFOEXW structure (winnt.h):
+//   OSVERSIONINFOEXW structure (winnt.h)
 //     https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
 //==============================================================
 
 // Example Usage:
 //     System.Console.WriteLine(
 //         $"{SevenKeyboard.OSVersion.MajorVersion}.{SevenKeyboard.OSVersion.MinorVersion}.{SevenKeyboard.OSVersion.BuildNumber}");
+//
+//     System.Console.WriteLine($"{SevenKeyboard.OSVersion.Win}\n{SevenKeyboard.OSVersion.Build}");
 //
 //     System.Console.WriteLine(
 //         $"IsWindows10OrGreater: {SevenKeyboard.OSVersion.IsWindows10OrGreater()}\n" +
@@ -248,6 +250,97 @@ namespace SevenKeyboard
 
         public static byte LOBYTE(ushort w)
             => (byte)(w & 0xFF);
+
+        public static string Win
+        {
+            get
+            {
+                switch (WinVer)
+                {
+                    case _WIN32_WINNT_WIN10:
+                        if (BuildNumber >= Build21H2)
+                            return "WIN_11";
+                        return "WIN_10";
+                    case _WIN32_WINNT_WINBLUE:
+                        return "WIN_8.1";
+                    case _WIN32_WINNT_WIN8:
+                        return "WIN_8";
+                    case _WIN32_WINNT_WIN7:
+                        return "WIN_7";
+                    case _WIN32_WINNT_VISTA:
+                        return "WIN_VISTA";
+                    case _WIN32_WINNT_WINXP:
+                        return "WIN_XP";
+                    case _WIN32_WINNT_WIN2K:
+                        return "WIN_2000";
+                    case _WIN32_WINNT_NT4:
+                        return "WIN_NT4";
+                    default:
+                        return "WIN_UNSUPPORTED";
+                }
+            }
+        }
+
+        // Return the highest known numeric threshold, not an exact release identity.
+        public static string Build
+        {
+            get
+            {
+                switch (Win)
+                {
+                    case "WIN_11":
+                        if (BuildNumber >= Build26H1)
+                            return "26H1";
+                        if (BuildNumber >= Build26H2)
+                            return "26H2";
+                        if (BuildNumber >= Build25H2)
+                            return "25H2";
+                        if (BuildNumber >= Build24H2)
+                            return "24H2";
+                        if (BuildNumber >= Build23H2)
+                            return "23H2";
+                        if (BuildNumber >= Build22H2)
+                            return "22H2";
+                        if (BuildNumber >= Build21H2)
+                            return "21H2";
+                        return "";
+
+                    case "WIN_10":
+                        if (BuildNumber >= BuildWin10_22H2)
+                            return "22H2";
+                        if (BuildNumber >= BuildWin10_21H2)
+                            return "21H2";
+                        if (BuildNumber >= BuildWin10_21H1)
+                            return "21H1";
+                        if (BuildNumber >= BuildWin10_20H2)
+                            return "20H2";
+                        if (BuildNumber >= Build20H1)
+                            return "20H1";
+                        if (BuildNumber >= Build19H2)
+                            return "19H2";
+                        if (BuildNumber >= Build19H1)
+                            return "19H1";
+                        if (BuildNumber >= BuildRs5)
+                            return "RS5";
+                        if (BuildNumber >= BuildRs4)
+                            return "RS4";
+                        if (BuildNumber >= BuildRs3)
+                            return "RS3";
+                        if (BuildNumber >= BuildRs2)
+                            return "RS2";
+                        if (BuildNumber >= BuildRs1)
+                            return "RS1";
+                        if (BuildNumber >= BuildTh2)
+                            return "TH2";
+                        if (BuildNumber >= BuildTh1)
+                            return "TH1";
+                        return "";
+
+                    default:
+                        return "";
+                }
+            }
+        }
 
         public static int WinVer
             => (MajorVersion << 8) | MinorVersion;

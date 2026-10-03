@@ -173,6 +173,9 @@ namespace SevenKeyboard
             }
         }
 
+        public static uint OSVersionInfoSize
+            => NativeVersionInfo.Value.dwOSVersionInfoSize;
+
         public static int MajorVersion
             => System.Environment.OSVersion.Version.Major;
 
@@ -182,8 +185,26 @@ namespace SevenKeyboard
         public static int BuildNumber
             => System.Environment.OSVersion.Version.Build;
 
+        public static uint PlatformId
+            => NativeVersionInfo.Value.dwPlatformId;
+
+        public static string CSDVersion
+            => NativeVersionInfo.Value.szCSDVersion;
+
+        public static ushort ServicePackMajor
+            => NativeVersionInfo.Value.wServicePackMajor;
+
+        public static ushort ServicePackMinor
+            => NativeVersionInfo.Value.wServicePackMinor;
+
+        public static ushort SuiteMask
+            => NativeVersionInfo.Value.wSuiteMask;
+
         public static byte ProductType
             => NativeVersionInfo.Value.wProductType;
+
+        public static byte Reserved
+            => NativeVersionInfo.Value.wReserved;
 
         // Query only when native information is requested; initialization failures stay in this type.
         private static class NativeVersionInfo

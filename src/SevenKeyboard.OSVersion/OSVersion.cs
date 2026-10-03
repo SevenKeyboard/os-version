@@ -31,19 +31,19 @@ namespace SevenKeyboard
     {
         // Update WINVER and _WIN32_WINNT
         // https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
-        public const ushort _WIN32_WINNT_NT4          = 0x0400; // Windows NT 4.0
-        public const ushort _WIN32_WINNT_WIN2K        = 0x0500; // Windows 2000
-        public const ushort _WIN32_WINNT_WINXP        = 0x0501; // Windows XP
-        public const ushort _WIN32_WINNT_WS03         = 0x0502; // Windows Server 2003
-        public const ushort _WIN32_WINNT_WIN6         = 0x0600; // Windows Vista
-        public const ushort _WIN32_WINNT_VISTA        = 0x0600; // Windows Vista
-        public const ushort _WIN32_WINNT_WS08         = 0x0600; // Windows Server 2008
-        public const ushort _WIN32_WINNT_LONGHORN     = 0x0600; // Windows Vista
-        public const ushort _WIN32_WINNT_WIN7         = 0x0601; // Windows 7
-        public const ushort _WIN32_WINNT_WIN8         = 0x0602; // Windows 8
-        public const ushort _WIN32_WINNT_WINBLUE      = 0x0603; // Windows 8.1
-        public const ushort _WIN32_WINNT_WINTHRESHOLD = 0x0A00; // Windows 10
-        public const ushort _WIN32_WINNT_WIN10        = 0x0A00; // Windows 10
+        public const ushort _WIN32_WINNT_NT4            = 0x0400; // Windows NT 4.0
+        public const ushort _WIN32_WINNT_WIN2K          = 0x0500; // Windows 2000
+        public const ushort _WIN32_WINNT_WINXP          = 0x0501; // Windows XP
+        public const ushort _WIN32_WINNT_WS03           = 0x0502; // Windows Server 2003
+        public const ushort _WIN32_WINNT_WIN6           = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_VISTA          = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_WS08           = 0x0600; // Windows Server 2008
+        public const ushort _WIN32_WINNT_LONGHORN       = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_WIN7           = 0x0601; // Windows 7
+        public const ushort _WIN32_WINNT_WIN8           = 0x0602; // Windows 8
+        public const ushort _WIN32_WINNT_WINBLUE        = 0x0603; // Windows 8.1
+        public const ushort _WIN32_WINNT_WINTHRESHOLD   = 0x0A00; // Windows 10
+        public const ushort _WIN32_WINNT_WIN10          = 0x0A00; // Windows 10
 
         public const int BuildTh1 = 10240;
         public const int BuildTh2 = 10586;
@@ -73,6 +73,34 @@ namespace SevenKeyboard
 
         // versionhelpers.h
         // https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
+
+        public static bool IsWindowsVersionOrGreater(
+            int majorVersion,
+            int minorVersion,
+            int servicePackMajor,
+            int buildNumber)
+        {
+            System.ArgumentOutOfRangeException.ThrowIfNegative(majorVersion);
+            System.ArgumentOutOfRangeException.ThrowIfNegative(minorVersion);
+            System.ArgumentOutOfRangeException.ThrowIfNegative(servicePackMajor);
+            System.ArgumentOutOfRangeException.ThrowIfGreaterThan(servicePackMajor, (int)ushort.MaxValue);
+            System.ArgumentOutOfRangeException.ThrowIfNegative(buildNumber);
+
+            if (MajorVersion > majorVersion)
+                return true;
+            else if (MajorVersion < majorVersion)
+                return false;
+            if (MinorVersion > minorVersion)
+                return true;
+            else if (MinorVersion < minorVersion)
+                return false;
+            if (ServicePackMajor > servicePackMajor)
+                return true;
+            else if (ServicePackMajor < servicePackMajor)
+                return false;
+            return BuildNumber >= buildNumber;
+        }
+
         public static bool IsWindowsXPOrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(5, 1);
 
@@ -173,8 +201,8 @@ namespace SevenKeyboard
             }
         }
 
-        public static uint OSVersionInfoSize
-            => NativeVersionInfo.Value.dwOSVersionInfoSize;
+        public static int OSVersionInfoSize
+            => (int)NativeVersionInfo.Value.dwOSVersionInfoSize;
 
         public static int MajorVersion
             => System.Environment.OSVersion.Version.Major;
@@ -185,16 +213,16 @@ namespace SevenKeyboard
         public static int BuildNumber
             => System.Environment.OSVersion.Version.Build;
 
-        public static uint PlatformId
-            => NativeVersionInfo.Value.dwPlatformId;
+        public static int PlatformId
+            => (int)NativeVersionInfo.Value.dwPlatformId;
 
         public static string CSDVersion
             => NativeVersionInfo.Value.szCSDVersion;
 
-        public static ushort ServicePackMajor
+        public static int ServicePackMajor
             => NativeVersionInfo.Value.wServicePackMajor;
 
-        public static ushort ServicePackMinor
+        public static int ServicePackMinor
             => NativeVersionInfo.Value.wServicePackMinor;
 
         public static ushort SuiteMask

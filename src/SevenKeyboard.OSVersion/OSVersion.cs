@@ -393,6 +393,7 @@ namespace SevenKeyboard
         }
 
         [DllImport("ntdll.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern int RtlGetVersion(ref OSVERSIONINFOEXW versionInfo);
 
         private static bool TryGetVersionInfo(out OSVERSIONINFOEXW versionInfo)

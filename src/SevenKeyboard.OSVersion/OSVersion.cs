@@ -249,6 +249,9 @@ namespace SevenKeyboard
         public static byte LOBYTE(ushort w)
             => (byte)(w & 0xFF);
 
+        public static int WinVer
+            => (MajorVersion << 8) | MinorVersion;
+
         public static int OSVersionInfoSize
             => (int)NativeVersionInfo.Value.dwOSVersionInfoSize;
 

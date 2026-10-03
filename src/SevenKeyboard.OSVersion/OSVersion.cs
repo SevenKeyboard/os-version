@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace SevenKeyboard
 {
     public static class OSVersion
@@ -23,6 +25,10 @@ namespace SevenKeyboard
         public const int Build25H2 = 26200;
         public const int Build26H2 = 26300;
         public const int Build26H1 = 28000;
+
+        public const byte VerNtWorkstation = 0x01;
+        public const byte VerNtDomainController = 0x02;
+        public const byte VerNtServer = 0x03;
 
         public static int MajorVersion
             => System.Environment.OSVersion.Version.Major;
@@ -114,5 +120,54 @@ namespace SevenKeyboard
 
         public static bool IsWindows1126H1OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, Build26H1);
+
+        public static bool IsWindowsServer()
+        {
+            if (!TryGetVersionInfo(out OSVERSIONINFOEXW versionInfo))
+                throw new System.InvalidOperationException("Failed to query Windows version information.");
+
+            switch (versionInfo.wProductType)
+            {
+                case VerNtWorkstation:
+                    return false;
+
+                case VerNtDomainController:
+                case VerNtServer:
+                    return true;
+
+                default:
+                    throw new System.InvalidOperationException("Unknown Windows product type.");
+            }
+        }
+
+        [DllImport("ntdll.dll")]
+        private static extern int RtlGetVersion(ref OSVERSIONINFOEXW versionInfo);
+
+        private static bool TryGetVersionInfo(out OSVERSIONINFOEXW versionInfo)
+        {
+            const int STATUS_SUCCESS = 0x00000000;
+
+            versionInfo = new OSVERSIONINFOEXW();
+            versionInfo.dwOSVersionInfoSize = (uint)Marshal.SizeOf<OSVERSIONINFOEXW>();
+
+            return RtlGetVersion(ref versionInfo) == STATUS_SUCCESS;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct OSVERSIONINFOEXW
+        {
+            public uint dwOSVersionInfoSize;
+            public uint dwMajorVersion;
+            public uint dwMinorVersion;
+            public uint dwBuildNumber;
+            public uint dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szCSDVersion;
+            public ushort wServicePackMajor;
+            public ushort wServicePackMinor;
+            public ushort wSuiteMask;
+            public byte wProductType;
+            public byte wReserved;
+        }
     }
 }

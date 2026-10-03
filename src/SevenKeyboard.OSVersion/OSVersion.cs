@@ -1,13 +1,36 @@
+//==============================================================
+// OSVersion — Windows version detection helpers for .NET
+//
+// GitHub: https://github.com/SevenKeyboard/os-version
+// Author: SevenKeyboard Ltd. (2026)
+// License: The Unlicense
+//
+// Documentation / References:
+//   Update WINVER and _WIN32_WINNT:
+//     https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
+//   versionhelpers.h header:
+//     https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
+//   OSVERSIONINFOEXW structure (winnt.h):
+//     https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
+//==============================================================
+
+// Example Usage:
+//     System.Console.WriteLine(
+//         $"{SevenKeyboard.OSVersion.MajorVersion}.{SevenKeyboard.OSVersion.MinorVersion}.{SevenKeyboard.OSVersion.BuildNumber}");
+//
+//     System.Console.WriteLine(
+//         $"IsWindows10OrGreater: {SevenKeyboard.OSVersion.IsWindows10OrGreater()}\n" +
+//         $"IsWindows11OrGreater: {SevenKeyboard.OSVersion.IsWindows11OrGreater()}\n" +
+//         $"IsWindowsServer: {SevenKeyboard.OSVersion.IsWindowsServer()}");
+
 using System.Runtime.InteropServices;
 
 namespace SevenKeyboard
 {
     public static class OSVersion
     {
-        /*
-         * Update WINVER and _WIN32_WINNT
-         * https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
-         */
+        // Update WINVER and _WIN32_WINNT
+        // https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
         public const ushort _WIN32_WINNT_NT4          = 0x0400; // Windows NT 4.0
         public const ushort _WIN32_WINNT_WIN2K        = 0x0500; // Windows 2000
         public const ushort _WIN32_WINNT_WINXP        = 0x0501; // Windows XP
@@ -48,10 +71,8 @@ namespace SevenKeyboard
         public const byte VER_NT_SERVER = 0x0000003;
         public const byte VER_NT_WORKSTATION = 0x0000001;
 
-        /*
-         * versionhelpers.h
-         * https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
-         */
+        // versionhelpers.h
+        // https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
         public static bool IsWindowsXPOrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(5, 1);
 
@@ -191,10 +212,8 @@ namespace SevenKeyboard
             return RtlGetVersion(ref versionInfo) == STATUS_SUCCESS;
         }
 
-        /*
-         * OSVERSIONINFOEXW
-         * https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
-         */
+        // OSVERSIONINFOEXW
+        // https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct OSVERSIONINFOEXW
         {

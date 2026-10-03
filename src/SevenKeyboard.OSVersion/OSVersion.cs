@@ -4,6 +4,24 @@ namespace SevenKeyboard
 {
     public static class OSVersion
     {
+        /*
+         * Update WINVER and _WIN32_WINNT
+         * https://learn.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170
+         */
+        public const ushort _WIN32_WINNT_NT4          = 0x0400; // Windows NT 4.0
+        public const ushort _WIN32_WINNT_WIN2K        = 0x0500; // Windows 2000
+        public const ushort _WIN32_WINNT_WINXP        = 0x0501; // Windows XP
+        public const ushort _WIN32_WINNT_WS03         = 0x0502; // Windows Server 2003
+        public const ushort _WIN32_WINNT_WIN6         = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_VISTA        = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_WS08         = 0x0600; // Windows Server 2008
+        public const ushort _WIN32_WINNT_LONGHORN     = 0x0600; // Windows Vista
+        public const ushort _WIN32_WINNT_WIN7         = 0x0601; // Windows 7
+        public const ushort _WIN32_WINNT_WIN8         = 0x0602; // Windows 8
+        public const ushort _WIN32_WINNT_WINBLUE      = 0x0603; // Windows 8.1
+        public const ushort _WIN32_WINNT_WINTHRESHOLD = 0x0A00; // Windows 10
+        public const ushort _WIN32_WINNT_WIN10        = 0x0A00; // Windows 10
+
         public const int BuildTh1 = 10240;
         public const int BuildTh2 = 10586;
         public const int BuildRs1 = 14393;
@@ -26,19 +44,14 @@ namespace SevenKeyboard
         public const int Build26H2 = 26300;
         public const int Build26H1 = 28000;
 
-        public const byte VerNtWorkstation = 0x01;
-        public const byte VerNtDomainController = 0x02;
-        public const byte VerNtServer = 0x03;
+        public const byte VER_NT_DOMAIN_CONTROLLER = 0x0000002;
+        public const byte VER_NT_SERVER = 0x0000003;
+        public const byte VER_NT_WORKSTATION = 0x0000001;
 
-        public static int MajorVersion
-            => System.Environment.OSVersion.Version.Major;
-
-        public static int MinorVersion
-            => System.Environment.OSVersion.Version.Minor;
-
-        public static int BuildNumber
-            => System.Environment.OSVersion.Version.Build;
-
+        /*
+         * versionhelpers.h
+         * https://learn.microsoft.com/en-us/windows/win32/api/versionhelpers/
+         */
         public static bool IsWindowsXPOrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(5, 1);
 
@@ -98,6 +111,7 @@ namespace SevenKeyboard
 
         public static bool IsWindows1022H2OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, BuildWin10_22H2);
+
         public static bool IsWindows11OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, Build21H2);
 
@@ -106,6 +120,7 @@ namespace SevenKeyboard
 
         public static bool IsWindows1122H2OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, Build22H2);
+
         public static bool IsWindows1123H2OrGreater()
             => System.OperatingSystem.IsWindowsVersionAtLeast(10, 0, Build23H2);
 
@@ -123,20 +138,43 @@ namespace SevenKeyboard
 
         public static bool IsWindowsServer()
         {
-            if (!TryGetVersionInfo(out OSVERSIONINFOEXW versionInfo))
-                throw new System.InvalidOperationException("Failed to query Windows version information.");
-
-            switch (versionInfo.wProductType)
+            switch (ProductType)
             {
-                case VerNtWorkstation:
+                case VER_NT_WORKSTATION:
                     return false;
 
-                case VerNtDomainController:
-                case VerNtServer:
+                case VER_NT_DOMAIN_CONTROLLER:
+                case VER_NT_SERVER:
                     return true;
 
                 default:
                     throw new System.InvalidOperationException("Unknown Windows product type.");
+            }
+        }
+
+        public static int MajorVersion
+            => System.Environment.OSVersion.Version.Major;
+
+        public static int MinorVersion
+            => System.Environment.OSVersion.Version.Minor;
+
+        public static int BuildNumber
+            => System.Environment.OSVersion.Version.Build;
+
+        public static byte ProductType
+            => NativeVersionInfo.Value.wProductType;
+
+        // Query only when native information is requested; initialization failures stay in this type.
+        private static class NativeVersionInfo
+        {
+            public static readonly OSVERSIONINFOEXW Value;
+
+            static NativeVersionInfo()
+            {
+                if (!TryGetVersionInfo(out OSVERSIONINFOEXW versionInfo))
+                    throw new System.InvalidOperationException("Failed to query Windows version information.");
+
+                Value = versionInfo;
             }
         }
 
@@ -153,6 +191,10 @@ namespace SevenKeyboard
             return RtlGetVersion(ref versionInfo) == STATUS_SUCCESS;
         }
 
+        /*
+         * OSVERSIONINFOEXW
+         * https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoexw
+         */
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct OSVERSIONINFOEXW
         {
